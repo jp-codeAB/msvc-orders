@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: msvc-orders
+
+  cloud:
+    config:
+      enabled: false
+      import-check.enabled: false
+      discovery.enabled: false
+
+  main:
+    allow-bean-definition-overriding: true
+
+eureka:
+  client:
+    enabled: false
