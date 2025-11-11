@@ -137,7 +137,7 @@ public class OrderController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @PreAuthorize("hasRole('ADMIN') or @orderAccessGuard.isPendingOwner(#id, authentication.principal.id)") // 💡 Usa el Guard
+    @PreAuthorize("hasRole('ADMIN') or @orderAccessGuard.isPendingOwner(#id, authentication.principal.id)")
     public void deleteOrder(@PathVariable("id") Long id) {
         manageOrderUseCase.deleteOrder(id);
     }
@@ -150,7 +150,7 @@ public class OrderController {
 
         boolean isOwner = manageOrderUseCase.isOwner(orderId, userId);
 
-        log.info("Internal ownership check for Order ID {} by User ID {}: {}", orderId, userId, isOwner); // 💡 FIX: log accesible
+        log.info("Internal ownership check for Order ID {} by User ID {}: {}", orderId, userId, isOwner);
         return ResponseEntity.ok(isOwner);
     }
 

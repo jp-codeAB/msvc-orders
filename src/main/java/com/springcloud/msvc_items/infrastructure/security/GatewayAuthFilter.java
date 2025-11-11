@@ -13,8 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public class GatewayAuthFilter extends OncePerRequestFilter {
 
-    private static final Logger log = LoggerFactory.getLogger(GatewayAuthFilter.class); // 💡 Logger añadido
-
+    private static final Logger log = LoggerFactory.getLogger(GatewayAuthFilter.class);
     private static final String USER_ID_HEADER = "X-User-ID";
     private static final String USER_ROLES_HEADER = "X-User-Roles";
     public static final String USER_EMAIL_HEADER = "X-User-Email";
@@ -27,10 +26,8 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
         String userRolesHeader = request.getHeader(USER_ROLES_HEADER);
         String userEmailHeader = request.getHeader(USER_EMAIL_HEADER);
 
-        // 💡 DEBUG: Registrar los headers recibidos antes de validar
         log.info("Headers recibidos - ID: {}, Roles: {}, Email: {}", userIdHeader, userRolesHeader, userEmailHeader);
 
-        // Su lógica de validación estricta (que ya tiene)
         if (userIdHeader == null || userRolesHeader == null || userIdHeader.isBlank() || userRolesHeader.isBlank()) {
             filterChain.doFilter(request, response);
             return;
@@ -45,7 +42,6 @@ public class GatewayAuthFilter extends OncePerRequestFilter {
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // 💡 DEBUG: Registrar el rol que se creó en el contexto de seguridad
             log.info("Roles asignados al AuthUser: {}", authUser.getAuthorities());
 
         } catch (Exception e) {

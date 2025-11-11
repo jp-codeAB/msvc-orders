@@ -44,7 +44,6 @@ public class OrderService implements CreateOrderUseCase, IManageOrderUseCase {
 
     @Override
     public Order createOrder(Order order){
-        // 1. Obtención de precios y cálculo de montos
         List<Long> productIds = order.getItems().stream()
                 .map(OrderItem::getProductId).collect(Collectors.toList());
         Map<Long, Double> prices = inventoryServicePort.getProductsPrice(productIds);
