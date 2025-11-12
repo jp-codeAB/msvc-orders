@@ -14,12 +14,17 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 8085
 
-ENV SPRING_PROFILES_ACTIVE=dev
-ENV CONFIG_SERVER_URI=http://config-server:8888
-ENV EUREKA_URI=http://eureka-server:8761/eureka/
-ENV RABBITMQ_HOST=rabbitmq
-ENV RABBITMQ_PORT=5672
-ENV RABBITMQ_USER=guest
-ENV RABBITMQ_PASS=guest
+ENV SPRING_PROFILES_ACTIVE=dev \
+    CONFIG_SERVER_URL=http://config-server:8888 \
+    EUREKA_URI=http://eureka-server:8761/eureka/ \
+    RABBITMQ_HOST=rabbitmq \
+    RABBITMQ_PORT=5672 \
+    RABBITMQ_USER=guest \
+    RABBITMQ_PASS=guest \
+    DB_HOST=postgres \
+    DB_PORT=5432 \
+    DB_NAME=orderdb \
+    DB_USER=postgres \
+    DB_PASSWORD=100juanU
 
 ENTRYPOINT ["java", "-jar", "app.jar"]

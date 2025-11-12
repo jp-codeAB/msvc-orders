@@ -1,8 +1,10 @@
-name: CD - msvc-orders
+name: CD-msvc-orders
 
 on:
-  push:
-    branches: [ "main" ]
+  workflow_run:
+    workflows: ["CI-msvc-orders"]
+    types:
+      - completed
 
 jobs:
   docker:
