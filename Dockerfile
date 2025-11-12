@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-EXPOSE 8085
+EXPOSE 8082
 
 ENV SPRING_PROFILES_ACTIVE=dev \
     CONFIG_SERVER_URL=http://config-server:8888 \
