@@ -2,13 +2,39 @@ name: CI-msvc-orders
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-  build_and_test:
+  build_and_package:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 100juanU
+          POSTGRES_DB: orderdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+      rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd="rabbitmq-diagnostics -q ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -19,12 +45,31 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
-          cache: 'gradle'
+          cache: gradle
 
       - name: Grant execute permission for Gradle Wrapper
         run: chmod +x gradlew
 
-      - name: Build without tests
+      - name: Wait for Services
+        run: |
+          echo "Waiting for PostgreSQL and RabbitMQ..."
+          for i in {1..30}; do
+            pg_isready -h localhost -p 5432 -U postgres && break || sleep 2
+          done
+          for i in {1..30}; do
+            nc -z localhost 5672 && break || sleep 2
+          done
+
+      - name: Build JAR (skip tests)
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/orderdb
+          SPRING_DATASOURCE_USERNAME: postgres
+          SPRING_DATASOURCE_PASSWORD: 100juanU
+          SPRING_PROFILES_ACTIVE: dev
+          RABBITMQ_HOST: localhost
+          RABBITMQ_PORT: 5672
+          RABBITMQ_USER: guest
+          RABBITMQ_PASS: guest
         run: ./gradlew clean build -x test
 
       - name: Upload Artifact (JAR File)

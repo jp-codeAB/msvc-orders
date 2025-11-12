@@ -13,9 +13,10 @@ WORKDIR /app
 COPY --from=builder /app/build/libs/*.jar app.jar
 
 EXPOSE 8082
+HEALTHCHECK CMD curl -f http://localhost:8082/actuator/health || exit 1
 
 ENV SPRING_PROFILES_ACTIVE=dev \
-    CONFIG_SERVER_URL=http://config-server:8888 \
+    CONFIG_SERVER_URI=http://config-server:8888 \
     EUREKA_URI=http://eureka-server:8761/eureka/ \
     RABBITMQ_HOST=rabbitmq \
     RABBITMQ_PORT=5672 \
@@ -25,6 +26,7 @@ ENV SPRING_PROFILES_ACTIVE=dev \
     DB_PORT=5432 \
     DB_NAME=orderdb \
     DB_USER=postgres \
-    DB_PASSWORD=100juanU
+    DB_PASS=100juanU
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+
